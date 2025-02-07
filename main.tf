@@ -76,11 +76,18 @@ data "aws_vpc" "requestor" {
 #Description : Provides a resource to create a VPC routing table.
 data "aws_route_table" "requestor" {
   count  = var.enable_peering == true ? length(distinct(sort(data.aws_subnets.requestor[0].ids))) : 0
-  vpc_id = var.requestor_vpc_id
+  # vpc_id = var.requestor_vpc_id
+ 
   depends_on = [
     aws_vpc_peering_connection.default,
-    data.aws_vpc.requestor
+    # data.aws_vpc.requestor
   ]
+    subnet_id = element(
+    distinct(sort(data.aws_subnets.requestor[0].ids)),
+    count.index
+  )
+
+
 }
 
 #Module      : SUBNET ID's
